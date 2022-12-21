@@ -38,7 +38,7 @@
 			output = '';
 		}
 	};
-	
+
 	onMount(() => {
 		setTimeout(() => {
 			document.querySelector('#input')?.focus();
@@ -57,7 +57,7 @@
 </div>
 <SplitPane>
 	<textarea
-		placeholder="Start typing an expression"
+		placeholder=""
 		slot="left"
 		id="input"
 		bind:value={input}
@@ -66,7 +66,7 @@
 		spellcheck="false"
 	/>
 	<textarea
-		placeholder="See the results here"
+		placeholder=""
 		slot="right"
 		id="output"
 		bind:value={output}
@@ -91,30 +91,27 @@
 					><img
 						alt="heythisischris"
 						class="thumbnail"
-						src="https://htic.io/images/logo.png"
+						src="./heythisischris.png"
 					/>heythisischris</a
 				>
 			</p>
 			<p>
 				Powered by <a target="_blank" rel="noreferrer" href="https://kit.svelte.dev"
-					><img
-						alt="SvelteKit"
-						class="thumbnail"
-						src="https://kit.svelte.dev/favicon.png"
-					/>SvelteKit</a
+					><img alt="SvelteKit" class="thumbnail" src="./sveltekit.png" />SvelteKit</a
 				>
 				&
 				<a target="_blank" rel="noreferrer" href="https://mathjs.org"
-					><img alt="MathJS" class="thumbnail" src="https://mathjs.org/favicon.ico" />MathJS</a
+					><img alt="MathJS" class="thumbnail" src="./mathjs.png" />MathJS</a
 				>
 			</p>
 			<p>
 				I was inspired by <a
 					target="_blank"
 					rel="noreferrer"
-					href="https://www.skytopia.com/software/opalcalc/">OpalCalc</a
+					href="https://www.skytopia.com/software/opalcalc/"
+					><img alt="OpalCalc" class="thumbnail" src="./opalcalc.png" />OpalCalc</a
 				> to make a lightweight split-pane calculator. Users can enter expressions in human terms on
-				the left (like a working document) and see live results on the right.
+				the left and see live results on the right.
 			</p>
 			<p>
 				Press <span>esc</span> to clear, type <span>ans</span> to use the last answer, and convert
@@ -126,7 +123,8 @@
 				Like what you see? <a
 					target="_blank"
 					rel="noreferrer"
-					href="https://donate.stripe.com/4gw7tI7gIc380jC7ss">Donate here</a
+					href="https://donate.stripe.com/4gw7tI7gIc380jC7ss"
+					><img alt="Stripe" class="thumbnail" src="./stripe.png" />Donate here</a
 				>!
 			</p>
 		</div>
@@ -172,7 +170,7 @@
 		align-items: center;
 	}
 	#innerModal {
-		width: 300px;
+		width: 320px;
 		height: 300px;
 		background-color: #111;
 		padding: 10px;
@@ -191,7 +189,7 @@
 	.thumbnail {
 		width: 20px;
 		height: 20px;
-		margin-right: 2px;
+		margin-right: 4px;
 		margin-bottom: -4px;
 		border-radius: 5px;
 	}
@@ -214,5 +212,8 @@
 		line-height: 1.5;
 		width: calc(100% - 40px);
 		height: calc(100vh - 70px);
+	}
+	#output {
+		background-color: #111;
 	}
 </style>
