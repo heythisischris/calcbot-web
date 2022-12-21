@@ -1,12 +1,14 @@
 <script>
 	import { onMount } from 'svelte';
-	import './styles.css';
 	import { evaluate } from 'mathjs';
 	import SplitPane from '../components/SplitPane.svelte';
+	import './styles.css';
+
 	let output = '';
 	let input = '';
 	let modal = false;
-	const onInput = () => {
+
+	const onInput = (e) => {
 		let lastAns = '';
 		output = '';
 		for (let row of input.split('\n')) {
@@ -14,7 +16,7 @@
 				if (['*', '/', '+', '-', '(', '^', '!'].includes(row[0])) {
 					row = 'ans' + row;
 				}
-				row = row.replace('ans', lastAns).replace(/\$/g, '').replace(/,/g, '');
+				row = row.replace(/ans/g, lastAns).replace(/\$/g, '').replace(/,/g, '');
 				const result = evaluate(row);
 				if (result !== undefined) {
 					output += result;
@@ -25,13 +27,22 @@
 		}
 		output = output.slice(0, -1);
 	};
+
 	const onKeyDown = (e) => {
 		e.preventDefault();
 	};
+
+	const onKeyUp = (e) => {
+		if (['Escape', 'Esc'].includes(e.key)) {
+			input = '';
+			output = '';
+		}
+	};
+	
 	onMount(() => {
 		setTimeout(() => {
 			document.querySelector('#input')?.focus();
-		}, 100);
+		}, 10);
 	});
 </script>
 
@@ -51,6 +62,8 @@
 		id="input"
 		bind:value={input}
 		on:input={onInput}
+		on:keyup={onKeyUp}
+		spellcheck="false"
 	/>
 	<textarea
 		placeholder="See the results here"
@@ -58,6 +71,7 @@
 		id="output"
 		bind:value={output}
 		on:keydown={onKeyDown}
+		spellcheck="false"
 	/>
 </SplitPane>
 {#if modal}
@@ -73,11 +87,47 @@
 		<div id="innerModal">
 			<p>
 				<img id="modalLogo" alt="logo" src="/favicon.png" /> calc.bot made by
-				<a target="_blank" rel="noreferrer" href="https://htic.io">heythisischris</a>
+				<a target="_blank" rel="noreferrer" href="https://htic.io"
+					><img
+						alt="heythisischris"
+						class="thumbnail"
+						src="https://htic.io/images/logo.png"
+					/>heythisischris</a
+				>
 			</p>
 			<p>
-				Powered by <a target="_blank" rel="noreferrer" href="https://kit.svelte.dev">SvelteKit</a> &
-				<a target="_blank" rel="noreferrer" href="https://www.npmjs.com/package/mathjs">MathJS</a>
+				Powered by <a target="_blank" rel="noreferrer" href="https://kit.svelte.dev"
+					><img
+						alt="SvelteKit"
+						class="thumbnail"
+						src="https://kit.svelte.dev/favicon.png"
+					/>SvelteKit</a
+				>
+				&
+				<a target="_blank" rel="noreferrer" href="https://mathjs.org"
+					><img alt="MathJS" class="thumbnail" src="https://mathjs.org/favicon.ico" />MathJS</a
+				>
+			</p>
+			<p>
+				I was inspired by <a
+					target="_blank"
+					rel="noreferrer"
+					href="https://www.skytopia.com/software/opalcalc/">OpalCalc</a
+				> to make a lightweight split-pane calculator. Users can enter expressions in human terms on
+				the left (like a working document) and see live results on the right.
+			</p>
+			<p>
+				Press <span>esc</span> to clear, type <span>ans</span> to use the last answer, and convert
+				between any units such as <span>hours</span> to <span>minutes</span> or
+				<span>centimeters</span>
+				to <span>inches</span>.
+			</p>
+			<p>
+				Like what you see? <a
+					target="_blank"
+					rel="noreferrer"
+					href="https://donate.stripe.com/4gw7tI7gIc380jC7ss">Donate here</a
+				>!
 			</p>
 		</div>
 	</div>
@@ -87,12 +137,14 @@
 	#logo {
 		width: 18px;
 		height: 18px;
-		margin-right: 2px;
+		margin-top: -1px;
+		margin-right: 1px;
 	}
 	#modalLogo {
 		width: 18px;
 		height: 18px;
-		margin-top: 2px;
+		margin-bottom: -4px;
+		margin-right: -5px;
 	}
 	a {
 		color: #fff;
@@ -100,11 +152,12 @@
 	#infoButton {
 		all: unset;
 		cursor: pointer;
-		transition: color 0.1s;
+		transition: opacity 0.1s;
 		display: flex;
+		opacity: 0.5;
 	}
 	#infoButton:hover {
-		color: #fff;
+		opacity: 1;
 	}
 	#outerModal {
 		position: absolute;
@@ -120,7 +173,7 @@
 	}
 	#innerModal {
 		width: 300px;
-		height: 90px;
+		height: 300px;
 		background-color: #111;
 		padding: 10px;
 		border-radius: 10px;
@@ -129,20 +182,25 @@
 		flex-direction: column;
 		text-align: center;
 	}
+	#innerModal p {
+		margin-block: 0.5em;
+	}
+	#innerModal span {
+		color: #ff6600;
+	}
+	.thumbnail {
+		width: 20px;
+		height: 20px;
+		margin-right: 2px;
+		margin-bottom: -4px;
+		border-radius: 5px;
+	}
 	#header {
 		position: absolute;
 		top: 11px;
 		left: 17px;
 		font-size: 14px;
-		color: #666;
 		user-select: none;
-	}
-	textarea {
-		height: calc(100vh - 70px);
-	}
-	#input {
-	}
-	#output {
 	}
 	textarea {
 		resize: none;
@@ -155,5 +213,6 @@
 		padding: 30px 20px;
 		line-height: 1.5;
 		width: calc(100% - 40px);
+		height: calc(100vh - 70px);
 	}
 </style>
