@@ -1,7 +1,6 @@
 <script>
 	import { onMount } from 'svelte';
 	import { parser } from 'mathjs';
-	import { get, set } from 'idb-keyval';
 	import { clickOutside } from '../scripts/clickOutside.js';
 	import SplitPane from '../components/SplitPane.svelte';
 	import './styles.css';
@@ -104,8 +103,6 @@
 		output = '';
 		document.title = 'calc.bot';
 		fileHandle = null;
-		await set('fileHandle', undefined);
-		await set('file', undefined);
 		unsaved = false;
 	};
 
@@ -123,10 +120,8 @@
 			excludeAcceptAllOption: true,
 			multiple: false
 		});
-		await set('fileHandle', fileHandle);
 		document.title = fileHandle.name;
 		input = await (await fileHandle.getFile()).text();
-		await set('file', input);
 		onInput();
 		document.querySelector('#input')?.focus();
 		unsaved = false;
@@ -144,7 +139,6 @@
 				}
 			]
 		});
-		await set('fileHandle', fileHandle);
 		document.title = fileHandle.name;
 		const writableStream = await fileHandle.createWritable();
 		await writableStream.write(input);
@@ -156,8 +150,6 @@
 	const saveFile = async () => {
 		if (fileHandle) {
 			const writableStream = await fileHandle.createWritable();
-			await set('fileHandle', fileHandle);
-			await set('file', input);
 			await writableStream.write(input);
 			await writableStream.close();
 			document.querySelector('#input')?.focus();
@@ -182,18 +174,20 @@
 
 	onMount(() => {
 		setTimeout(async () => {
-			fileHandle = await get('fileHandle');
-			if (fileHandle) {
-				document.title = fileHandle.name;
-				input = await get('file');
-				onInput();
-				unsaved = false;
-			}
 			document.querySelector('#input')?.focus();
 		}, 1);
 	});
 </script>
 
+<svelte:window
+	on:beforeunload={(e) => {
+		if (unsaved) {
+			e.preventDefault();
+			e.returnValue = '';
+			return;
+		}
+	}}
+/>
 <div id="header">
 	<div class="toolbarContainer">
 		<button
@@ -219,19 +213,19 @@
 					class="menuButton"
 					on:click={() => {
 						newFile();
-					}}>New</button
+					}}>New <span class="menuShortcut">Ctrl+N</span></button
 				>
 				<button
 					class="menuButton"
 					on:click={async () => {
 						openFile();
-					}}>Open</button
+					}}>Open <span class="menuShortcut">Ctrl+O</span></button
 				>
 				<button
 					class="menuButton"
 					on:click={() => {
 						saveFile();
-					}}>Save</button
+					}}>Save <span class="menuShortcut">Ctrl+S</span></button
 				>
 				<button
 					class="menuButton"
@@ -273,19 +267,19 @@
 					class="menuButton"
 					on:click={() => {
 						menu = '';
-					}}>Cut</button
+					}}>Cut <span class="menuShortcut">Ctrl-X</span></button
 				>
 				<button
 					class="menuButton"
 					on:click={() => {
 						menu = '';
-					}}>Copy</button
+					}}>Copy <span class="menuShortcut">Ctrl-C</span></button
 				>
 				<button
 					class="menuButton"
 					on:click={() => {
 						menu = '';
-					}}>Paste</button
+					}}>Paste <span class="menuShortcut">Ctrl-V</span></button
 				>
 			</div>
 		{/if}
@@ -432,6 +426,12 @@
 {/if}
 
 <style>
+	.menuShortcut {
+		font-size: 8px;
+		color: #aaa;
+		float: right;
+		margin-top: 4px;
+	}
 	#unsaved {
 		display: flex;
 		font-size: 9px;
