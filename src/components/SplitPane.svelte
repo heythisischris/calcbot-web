@@ -1,5 +1,5 @@
 <script>
-	export let leftInitialSize = '66%';
+	export let leftInitialSize = '300px';
 
 	let left;
 	let isDragging = false;
